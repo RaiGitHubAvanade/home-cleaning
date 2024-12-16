@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import '../../../common/common.dart';
 import '../../../utils/utils.dart';
 import '../../home/controllers/popular_services_carousel.controllers.dart';
+import 'service_bookmark_bottom_sheet.dart';
 
 class TPopularServiceCard extends StatelessWidget {
   const TPopularServiceCard({
@@ -16,8 +16,8 @@ class TPopularServiceCard extends StatelessWidget {
     this.showIconButton = true,
   });
 
-  final Function()? onPressed;
   final ServiceModel item;
+  final Function()? onPressed;
   final EdgeInsetsGeometry? padding;
   final bool showBorder, showIconButton;
 
@@ -115,15 +115,8 @@ class TPopularServiceCard extends StatelessWidget {
 
                   // Bookmark Button
                   if (showIconButton)
-                    IconButton(
-                      onPressed: () => _showBottomSheet(context, item),
-                      icon: Icon(
-                          item.isBookmark
-                              ? AppIcons.bookmark
-                              : AppIcons.linearBookmark,
-                          color: TColors.green),
-                      iconSize: TSizes.iconMd,
-                    )
+                    ServiceShowBookmarkBottomSheet(
+                        item: item, onPressed: onPressed),
                   // Title - Icon - Name - Cost
                 ],
               ),
@@ -133,83 +126,6 @@ class TPopularServiceCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  void _showBottomSheet(BuildContext context, ServiceModel item) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        final textTheme = Theme.of(context).textTheme;
-        return SafeArea(
-          child: SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: TSizes.defaultSpace,
-                vertical: TSizes.size16,
-              ),
-              width: double.infinity,
-              child: Column(
-                children: [
-                  // Remove Favorites text
-                  Text(
-                    item.isBookmark
-                        ? TTexts.removeFavorites
-                        : TTexts.addFavorites,
-                    style: textTheme.headlineSmall!.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-
-                  // Divider
-                  const SizedBox(height: TSizes.spaceBtwItems),
-                  const Divider(),
-                  const SizedBox(height: TSizes.size6),
-
-                  // Popular Service Card
-                  TPopularServiceCard(
-                    item: item,
-                    showBorder: false,
-                    showIconButton: false,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: TSizes.size10),
-                  ),
-
-                  // Button - Cancel - Remove
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: FilledButton(
-                          onPressed: Get.back,
-                          style: const ButtonStyle(
-                            backgroundColor:
-                                WidgetStatePropertyAll(TColors.whiteSmoke),
-                          ),
-                          child: const Text(
-                            TTexts.cancel,
-                            style: TextStyle(color: TColors.green),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: TSizes.size10),
-                      Expanded(
-                        child: FilledButton(
-                          onPressed: onPressed,
-                          child: Text(
-                            item.isBookmark ? TTexts.yesRemove : TTexts.yesAdd,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }
